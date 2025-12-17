@@ -1,4 +1,10 @@
-const express = require("express");
-const multer = require("multer");
-const upload = multer({dest:"/uploads"})
-const app = express();
+const fs=require("fs");
+async function readfile(){
+    const response=await fs.readFile("jsndaj.txt");
+}
+
+function sync(){
+    console.log("message sync");
+}
+readfile();
+sync();
