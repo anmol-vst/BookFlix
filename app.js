@@ -1,7 +1,9 @@
 const express = require("express")
+const mongoose = require("mongoose")
 const {config}= require("dotenv");
 const cookieParser = require("cookie-parser");
 const cors = require("cors")
+const {errorMiddleware} = require("./middlewares/errorMiddleware")
 const app = express();
 
 module.exports = app;
@@ -15,3 +17,4 @@ credentials:true}))
 app.use(cookieParser)
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
+app.use(errorMiddleware);
