@@ -1,5 +1,5 @@
 import { error } from "console";
-
+const {sendVerificationCode} = require("../utils/sendVerificationCode")
 const express = require("express");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");

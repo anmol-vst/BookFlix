@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { parse } = require("path");
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -54,8 +55,21 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
- const User = mongoose.model("User", userSchema);
- module.exports={
-    User
- }
+userSchema.methods.generateVerificationCode = function () {
+  function generateRandomFiveDigitNumber() {
+    const firstDigit = Math.floor(Math.random() * 9) + 1;
+    const RemainingDigits = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, 0);
+    return parseInt(firstDigit + RemainingDigits);
+  }
+  const verificationCode = generateRandomFiveDigitNumber();
+  this.verificationCode = verificationCode;
+  this.verificationCodeExpire = Date.now() + 5 * 60 * 1000;
+  return verificationCode;
+};
 
+const User = mongoose.model("User", userSchema);
+module.exports = {
+  User,
+};
