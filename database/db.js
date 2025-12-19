@@ -1,8 +1,6 @@
 const mongoose  = require("mongoose");
 const { options } = require("../app");
-function connectToMongoDb (){
-    mongoose.connect(process.env.MONGO_URI,{
-        dbName:BookLibrary,ls 
-    })
+async function connectToMongoDb (){
+   await mongoose.connect(process.env.MONGO_URI)
 }
-moudule.exports = {connectToMongoDb}
+module.exports = {connectToMongoDb}

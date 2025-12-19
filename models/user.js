@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: [User, Admin],
-      default: User,
+      // enum: [client, Admin],
+      // default: client,
     },
     accountVerified: {
       type: Boolean,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
       {
         book_id: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: borrow,
+          // ref: borrow,
         },
         returned: {
           type: Boolean,

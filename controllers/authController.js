@@ -1,13 +1,12 @@
-import { error } from "console";
+
 const {sendVerificationCode} = require("../utils/sendVerificationCode")
 const express = require("express");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const ErrorHandler = require("../middlewares/errorMiddleware");
+const {ErrorHandler} = require("../middlewares/errorMiddleware");
 const { catchAsyncErrors } = require("../middlewares/catchAsyncError");
-
-export const register = catchAsyncErrors(async (req, res, next) => {
+ const register = catchAsyncErrors(async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
@@ -47,3 +46,4 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     next(error);
   }
 });
+module.exports = {register}

@@ -1,6 +1,6 @@
 const { generateVerifictionEmailTemplate } = require("./emailVerification");
 const { sendEmail } = require("./sendEmail");
-export async function sendVerificationCode(verificationCode, email, res) {
+ async function sendVerificationCode(verificationCode, email, res) {
   try {
     const message = generateVerifictionEmailTemplate(verificationCode);
     sendEmail({
@@ -19,3 +19,4 @@ export async function sendVerificationCode(verificationCode, email, res) {
     });
   }
 }
+module.exports= {sendVerificationCode}
