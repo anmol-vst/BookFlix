@@ -4,21 +4,22 @@ const {config}= require("dotenv");
 const cookieParser = require("cookie-parser");
 const cors = require("cors")
 const {errorMiddleware} = require("./middlewares/errorMiddleware")
-const authrouter = require("./routes/authRoute")
+const {router} = require("./routes/authRoute")
 const {connectToMongoDb}=  require("./database/db")
 const app = express();
 
-module.exports = app;
+// module.exports = app;
 
 config({path:"./config/config.env"})
-app.use(cors({origin:[process.env.FRONTEND
-    -URL
-],
+app.use(cors({origin:[process.env.FRONTEND_URL],
 methods:["GET","PUT","POST","DELETE"],
 credentials:true}))
-app.use(cookieParser)
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use("/api/v1/auth",authrouter)
+app.use("/api/v1/auth",router)
 connectToMongoDb();
 app.use(errorMiddleware);
+
+module.exports = {app};
+// app.listen(4000);
