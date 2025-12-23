@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { ErrorHandler } = require("../middlewares/errorMiddleware");
 const { catchAsyncErrors } = require("../middlewares/catchAsyncError");
+const { sendToken } = require("../utils/sendToken");
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -53,37 +54,41 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Email or otp is missing", 400));
   }
   try {
-    const userEntries = await User.find({
+    const userAllEntries = await User.find({
       email,
       accountVerified: false,
     }).sort({ createdAt: -1 });
-    if (!userEntries) {
+    if (!userAllEntries) {
       return next(new ErrorHandler("not found", 404));
     }
     let user;
-    if (userEntries.length > 1) {
-      user = userEntries[0];
+    if (userAllEntries.length > 1) {
+      user = userAllEntries[0];
       await User.deleteMany({
-        _id: { $ne: user_id },
+        _id: { $ne: user._id },
         email,
         accountVerified: false,
       });
+    } else {
+      user = userAllEntries[0];
     }
-    if(verificationCode!==Number(otp)){
-      return next (new ErrorHandler("invalid Otp",400))
+    if (user.verificationCode !== Number(otp)) {
+      return next(new ErrorHandler("invalid Otp", 400));
     }
     const currentTime = Date.now();
-   const verificationCodeExpire = new Date(user.verificationCodeExpire).getTime()
-   if(currentTime>verificationCodeExpire){
-   return next(new ErrorHandler("otp Expired",400))
-   }
+    const verificationCodeExpire = new Date(
+      user.verificationCodeExpire
+    ).getTime();
+    if (currentTime > verificationCodeExpire) {
+      return next(new ErrorHandler("otp Expired", 400));
+    }
     user.accountVerified = true;
     user.verificationCode = null;
     user.verificationCodeExpire = null;
-    await user.save({validateModifiedOnly:true})
-    sendToken(user,200,"Account Verified",res)
+    await user.save({ validateModifiedOnly: true });
+    sendToken(user, 200, "Account Verified", res);
   } catch (error) {
     return next(new ErrorHandler("Internal server error", 500));
   }
 });
-module.exports = { register };
+module.exports = { register, verifyOTP };

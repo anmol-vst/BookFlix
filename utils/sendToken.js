@@ -1,6 +1,6 @@
 const sendToken = (user, statuscode, message, response) => {
- const token = user.generateToken();
-    res
+  const token = user.generateToken();
+  res
     .status(statuscode)
     .cookie("Token", sendToken, {
       expires: new Date(
@@ -15,3 +15,5 @@ const sendToken = (user, statuscode, message, response) => {
       token,
     });
 };
+
+module.exports = { sendToken };
