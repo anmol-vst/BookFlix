@@ -3,11 +3,11 @@ const { sendEmail } = require("./sendEmail");
  async function sendVerificationCode(verificationCode, email, res) {
   try {
     const message = generateVerifictionEmailTemplate(verificationCode);
-    sendEmail({
+    sendEmail(
       email,
-      subject: "Verification code BOOKFLIX ",
+      subject = "Verification code BOOKFLIX ",
       message,
-    });
+    );
     res.status(200).json({
       success: true,
       message: "verification code sent successfully",

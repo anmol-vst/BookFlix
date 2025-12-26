@@ -6,7 +6,8 @@ const crypto = require("crypto");
 const { ErrorHandler } = require("../middlewares/errorMiddleware");
 const { catchAsyncErrors } = require("../middlewares/catchAsyncError");
 const { sendToken } = require("../utils/sendToken");
-const register = async (req, res, next) => {
+
+const register = catchAsyncErrors(async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -45,9 +46,9 @@ const register = async (req, res, next) => {
     await user.save();
     sendVerificationCode(verificationCode, email, res);
   } catch (error) {
-    next(error);
+    return next(new ErrorHandler("internal ser",500));
   }
-};
+});
 const verifyOTP = catchAsyncErrors(async (req, res, next) => {
   const { email, otp } = req.body;
   if (!email || !otp) {
@@ -88,7 +89,54 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
     await user.save({ validateModifiedOnly: true });
     sendToken(user, 200, "Account Verified", res);
   } catch (error) {
-    return next(new ErrorHandler("Internal server error", 500));
+    return next(new ErrorHandler("Internal serve error", 500));
   }
 });
-module.exports = { register, verifyOTP };
+const login = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new ErrorHandler("enter all fields", 400));
+  }
+  const user = User.findOne({
+    email,
+    accountVerified: true,
+  }).select("+password");
+  if (!user) {
+    return next(new ErrorHandler("invalid email or password", 400));
+  }
+  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler("invalid emailor password", 400));
+  }
+  sendToken(user, 200, "login success", res);
+});
+const logout = catchAsyncErrors(async (req, res, next) => {
+  res
+    .status(200)
+    .cookie("token", "", { expire: new Date(Date.now()), httpOnly: true })
+    .json({
+      suucess: true,
+      message: "logged out successfully",
+    });
+});
+const getUser = catchAsyncErrors(async (req, res, next) => {
+  const user = req.user;
+  res.status(200).json({
+    success: true,
+    user,
+  });
+  next();
+});
+const forgotPassword = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findOne({
+    email: req.body.email,
+    accountVerified: true,
+  });
+  if (!user) {
+    return next(new ErrorHandler("invalid user", 400));
+  }
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+});
+module.exports = { register, verifyOTP, login, logout, getUser,forgotPassword };

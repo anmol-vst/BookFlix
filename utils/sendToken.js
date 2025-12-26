@@ -1,10 +1,11 @@
-const sendToken = (user, statuscode, message, response) => {
+const sendToken = (user, statuscode, message, res) => {
   const token = user.generateToken();
+  
   res
     .status(statuscode)
-    .cookie("Token", sendToken, {
+    .cookie("Token", token, {
       expires: new Date(
-        Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+        Date.now() + process.env.JWT_EXPIRES * 24 * 60 * 60 * 1000
       ),
       httpOnly: true,
     })
