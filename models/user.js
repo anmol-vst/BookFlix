@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { parse } = require("path");
-const jwt =  require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -31,7 +32,7 @@ const userSchema = new mongoose.Schema(
       {
         book_id: {
           type: mongoose.Schema.Types.ObjectId,
-          // ref: borrow,
+          ref: "Borrow",
         },
         returned: {
           type: Boolean,
@@ -70,13 +71,21 @@ userSchema.methods.generateVerificationCode = function () {
   return verificationCode;
 };
 
-userSchema.methods.generateToken= function() {
-  return jwt.sign({id: this._id},
-    process.env.JWT_SECRET_KEY,{
-      expiresIn: process.env.JWT_EXPIRES, 
-    }
-  )
-}
+userSchema.methods.generateToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
+};
+userSchema.methods.getResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+    this.resetPasswordExpired = Date.now() + 15*60*1000;
+    return resetToken;
+};
 const User = mongoose.model("User", userSchema);
 module.exports = {
   User,

@@ -6,8 +6,8 @@
             border: 1px solid #ddd; 
             border-radius: 8px; 
             text-align: center; 
-            background-color: #ffffff;">
-  <h2 style="margin:0; color:#333;">Bookworm Verification Code</h2>
+            background-color: #ddd;">
+  <h2 style="margin:0; color: #333;">Bookworm Verification Code</h2>
   <div style="margin-top:20px; 
               font-size:28px; 
               font-weight:bold; 

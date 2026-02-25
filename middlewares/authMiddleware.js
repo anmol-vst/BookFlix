@@ -10,4 +10,14 @@ const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
   req.user = await User.findById(decoded.id);
 });
-module.exports = { isAuthenticated };
+const isAuthorised = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorHandler("you are Unauthorised for this action", 400),
+      );
+    }
+    next();
+  };
+};
+module.exports = { isAuthenticated,isAuthorised, };

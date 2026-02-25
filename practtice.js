@@ -8,3 +8,5 @@ function sync(){
 }
 readfile();
 sync();
+
+crypto.getRandomValues
