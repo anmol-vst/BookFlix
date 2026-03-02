@@ -21,8 +21,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      // enum: [client, Admin],
-      // default: client,
+      enum: ["client", "Admin"],
+      default: "client",
     },
     accountVerified: {
       type: Boolean,
