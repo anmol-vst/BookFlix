@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors")
 const {errorMiddleware} = require("./middlewares/errorMiddleware")
 const {router} = require("./routes/authRoute")
+const book= require("./routes/bookRouter")
+// const borrow= require("./routes/borrowedRoutes")
 const {connectToMongoDb}=  require("./database/db")
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use("/api/v1/auth",router)
+app.use("/api/v1/book",book.router)
+// app.use("/api/v1/borrow",borrow)
 connectToMongoDb();
 app.use(errorMiddleware);
 

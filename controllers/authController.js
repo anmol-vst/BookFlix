@@ -101,7 +101,7 @@ const login = catchAsyncErrors(async (req, res, next) => {
   if (!email || !password) {
     return next(new ErrorHandler("enter all fields", 400));
   }
-  const user = User.findOne({
+  const user = await User.findOne({
     email,
     accountVerified: true,
   }).select("+password");
@@ -110,7 +110,7 @@ const login = catchAsyncErrors(async (req, res, next) => {
   }
   const isPasswordMatched = await bcrypt.compare(password, user.password);
   if (!isPasswordMatched) {
-    return next(new ErrorHandler("invalid emailor password", 400));
+    return next(new ErrorHandler("invalid email or password", 400));
   }
   sendToken(user, 200, "login success", res);
 });

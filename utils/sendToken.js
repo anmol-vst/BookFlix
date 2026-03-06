@@ -3,9 +3,9 @@ const sendToken = (user, statuscode, message, res) => {
 
   res
     .status(statuscode)
-    .cookie("Token", token, {
+    .cookie("token", token, {
       expires: new Date(
-        Date.now() + process.env.JWT_EXPIRES * 24 * 60 * 60 * 1000,
+        Date.now() + parseInt(process.env.JWT_EXPIRES) * 24 * 60 * 60 * 1000,
       ),
       httpOnly: true,
     })

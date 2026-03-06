@@ -4,8 +4,8 @@ const { User } = require("../models/user");
 const { ErrorHandler } = require("../middlewares/errorMiddleware");
 
 const addBook = catchAsyncErrors(async (req, res, next) => {
-  const { title, author, description, price, quantity } = req.params;
-  if (title || !author || !description || !price || !quantity) {
+  const { title, author, description, price, quantity } = req.body;
+  if (!title || !author || !description || !price || !quantity) {
     return next(new ErrorHandler("all fields are required", 400));
   }
   const book = await Book.create({
